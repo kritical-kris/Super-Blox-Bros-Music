@@ -1,1 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Super Blox Bros. — Music</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>SUPER BLOX BROS.</h1>
+        <p>MUSIC</p>
+    </header>
+
+    <main>
+
+        <section class="player">
+            <div class="album-art">
+                <span>♪</span>
+            </div>
+
+            <div class="track-info">
+                <h2 id="track-title">Select a Track</h2>
+                <p id="track-source">Super Blox Bros.</p>
+            </div>
+
+            <div class="controls">
+                <button id="prev-button">◀◀</button>
+                <button id="play-button">▶</button>
+                <button id="next-button">▶▶</button>
+            </div>
+
+            <div class="progress-container">
+                <span id="current-time">0:00</span>
+
+                <input
+                    type="range"
+                    id="progress-bar"
+                    min="0"
+                    max="100"
+                    value="0"
+                >
+
+                <span id="duration">0:00</span>
+            </div>
+
+            <div class="volume-container">
+                🔊
+                <input
+                    type="range"
+                    id="volume-bar"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="1"
+                >
+            </div>
+
+            <div class="extra-controls">
+                <button id="shuffle-button">🔀 Shuffle</button>
+                <button id="repeat-button">🔁 Repeat</button>
+            </div>
+        </section>
+
+
+        <section class="music-library">
+
+            <h2>TRACK LIST</h2>
+
+            <input
+                type="text"
+                id="search-bar"
+                placeholder="Search music..."
+            >
+
+            <div id="track-list">
+                <!-- Tracks will be added here by JavaScript -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <audio id="audio-player"></audio>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
