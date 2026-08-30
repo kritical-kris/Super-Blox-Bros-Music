@@ -1,8 +1,43 @@
 const tracks = [
     {
-        title: "SPAWNLIGHT",
+        title: "Super Blox Bros - Menu",
         source: "Super Blox Bros.",
-        file: "SPAWNLIGHT.mp3"
+        file: "Super Blox Bros - Menu.ogg"
+    },
+    {
+        title: "Bloxxing Fields",
+        source: "Super Blox Bros.",
+        file: "Bloxxing Fields.ogg"
+    },
+    {
+        title: "Fire Bloxxer",
+        source: "Super Blox Bros.",
+        file: "Fire Bloxxer.ogg"
+    },
+    {
+        title: "BLOX SHOT",
+        source: "Super Blox Bros.",
+        file: "BLOX SHOT.ogg"
+    },
+    {
+        title: "Escape from HQ",
+        source: "Super Blox Bros.",
+        file: "Escape from HQ.ogg"
+    },
+    {
+        title: "Chaos Canyon",
+        source: "Super Blox Bros.",
+        file: "Chaos Canyon.ogg"
+    },
+    {
+        title: "Banlands",
+        source: "Super Blox Bros.",
+        file: "Banlands.ogg"
+    },
+    {
+        title: "Blox On and On",
+        source: "Super Blox Bros.",
+        file: "Blox On and On.ogg"
     }
 ];
 
@@ -34,31 +69,29 @@ let isRepeatEnabled = false;
 
 function loadTrack(index) {
     currentTrackIndex = index;
-
     const track = tracks[currentTrackIndex];
 
     audioPlayer.src = track.file;
-
     trackTitle.textContent = track.title;
     trackSource.textContent = track.source;
 
     progressBar.value = 0;
     currentTimeDisplay.textContent = "0:00";
     durationDisplay.textContent = "0:00";
+
+    updateActiveTrackInList();
 }
 
 function playTrack() {
     if (tracks.length === 0) return;
 
     audioPlayer.play();
-
     isPlaying = true;
     playButton.textContent = "❚❚";
 }
 
 function pauseTrack() {
     audioPlayer.pause();
-
     isPlaying = false;
     playButton.textContent = "▶";
 }
@@ -74,32 +107,20 @@ playButton.addEventListener("click", function () {
 function nextTrack() {
     if (isShuffleEnabled && tracks.length > 1) {
         let randomIndex;
-
         do {
             randomIndex = Math.floor(Math.random() * tracks.length);
         } while (randomIndex === currentTrackIndex);
 
         loadTrack(randomIndex);
     } else {
-        currentTrackIndex++;
-
-        if (currentTrackIndex >= tracks.length) {
-            currentTrackIndex = 0;
-        }
-
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
         loadTrack(currentTrackIndex);
     }
-
     playTrack();
 }
 
 function previousTrack() {
-    currentTrackIndex--;
-
-    if (currentTrackIndex < 0) {
-        currentTrackIndex = tracks.length - 1;
-    }
-
+    currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
     loadTrack(currentTrackIndex);
     playTrack();
 }
@@ -119,23 +140,16 @@ audioPlayer.addEventListener("ended", function () {
 audioPlayer.addEventListener("timeupdate", function () {
     if (!audioPlayer.duration) return;
 
-    const progress =
-        (audioPlayer.currentTime / audioPlayer.duration) * 100;
-
+    const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
     progressBar.value = progress;
 
-    currentTimeDisplay.textContent =
-        formatTime(audioPlayer.currentTime);
-
-    durationDisplay.textContent =
-        formatTime(audioPlayer.duration);
+    currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
+    durationDisplay.textContent = formatTime(audioPlayer.duration);
 });
 
 progressBar.addEventListener("input", function () {
     if (!audioPlayer.duration) return;
-
-    audioPlayer.currentTime =
-        (progressBar.value / 100) * audioPlayer.duration;
+    audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
 });
 
 volumeBar.addEventListener("input", function () {
@@ -144,101 +158,71 @@ volumeBar.addEventListener("input", function () {
 
 shuffleButton.addEventListener("click", function () {
     isShuffleEnabled = !isShuffleEnabled;
-
-    shuffleButton.textContent =
-        isShuffleEnabled
-            ? "🔀 Shuffle: ON"
-            : "🔀 Shuffle";
+    shuffleButton.textContent = isShuffleEnabled ? "🔀 Shuffle: ON" : "🔀 Shuffle";
 });
 
 repeatButton.addEventListener("click", function () {
     isRepeatEnabled = !isRepeatEnabled;
-
-    repeatButton.textContent =
-        isRepeatEnabled
-            ? "🔁 Repeat: ON"
-            : "🔁 Repeat";
+    repeatButton.textContent = isRepeatEnabled ? "🔁 Repeat: ON" : "🔁 Repeat";
 });
 
 function formatTime(seconds) {
-    if (isNaN(seconds)) {
-        return "0:00";
-    }
-
+    if (isNaN(seconds)) return "0:00";
     const minutes = Math.floor(seconds / 60);
-
-    const remainingSeconds =
-        Math.floor(seconds % 60);
-
-    return (
-        minutes +
-        ":" +
-        remainingSeconds
-            .toString()
-            .padStart(2, "0")
-    );
+    const remainingSeconds = Math.floor(seconds % 60);
+    return minutes + ":" + remainingSeconds.toString().padStart(2, "0");
 }
 
 function displayTracks(trackArray) {
     trackList.innerHTML = "";
 
     trackArray.forEach(function (track) {
-        const trackElement =
-            document.createElement("div");
+        const trackElement = document.createElement("div");
+        const realIndex = tracks.indexOf(track);
 
         trackElement.classList.add("track");
+        if (realIndex === currentTrackIndex) {
+            trackElement.classList.add("active");
+        }
 
         trackElement.innerHTML = `
-            <span class="track-number">
-                1
-            </span>
-
-            <span class="track-name">
-                ${track.title}
-            </span>
-
-            <span class="track-source">
-                ${track.source}
-            </span>
+            <span class="track-number">#${realIndex + 1}</span>
+            <span class="track-name">${track.title}</span>
+            <span class="track-source">${track.source}</span>
         `;
 
-        trackElement.addEventListener(
-            "click",
-            function () {
-                const originalIndex =
-                    tracks.indexOf(track);
-
-                loadTrack(originalIndex);
-                playTrack();
-            }
-        );
+        trackElement.addEventListener("click", function () {
+            loadTrack(realIndex);
+            playTrack();
+        });
 
         trackList.appendChild(trackElement);
     });
 }
 
+function updateActiveTrackInList() {
+    const trackElements = trackList.querySelectorAll(".track");
+    trackElements.forEach((el, index) => {
+        if (index === currentTrackIndex) {
+            el.classList.add("active");
+        } else {
+            el.classList.remove("active");
+        }
+    });
+}
+
 searchBar.addEventListener("input", function () {
-    const searchTerm =
-        searchBar.value.toLowerCase();
-
-    const filteredTracks =
-        tracks.filter(function (track) {
-            return (
-                track.title
-                    .toLowerCase()
-                    .includes(searchTerm)
-                ||
-                track.source
-                    .toLowerCase()
-                    .includes(searchTerm)
-            );
-        });
-
+    const searchTerm = searchBar.value.toLowerCase();
+    const filteredTracks = tracks.filter(function (track) {
+        return (
+            track.title.toLowerCase().includes(searchTerm) ||
+            track.source.toLowerCase().includes(searchTerm)
+        );
+    });
     displayTracks(filteredTracks);
 });
 
+// Initialize
 loadTrack(0);
-
 displayTracks(tracks);
-
 audioPlayer.volume = volumeBar.value;
